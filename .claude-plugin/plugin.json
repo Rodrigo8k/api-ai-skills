@@ -1,0 +1,20 @@
+{
+  "name": "bingx-ai-skills",
+  "version": "0.3.6",
+  "skills": [
+    "./skills/"
+  ],
+  "keywords": [
+    "claude-code",
+    "claude-skills",
+    "bingx",
+    "trading",
+    "cryptocurrency",
+    "perpetual-contracts",
+    "swap",
+    "futures",
+    "market-data",
+    "algorithmic-trading",
+    "twap"
+  ]
+}

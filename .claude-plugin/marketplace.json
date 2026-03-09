@@ -1,0 +1,43 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "bingx-ai-skills",
+  "description": "BingX OpenAPI skills for Claude Code - AI Agent trading, market data access, and account management for perpetual contracts, spot, and more",
+  "owner": {
+    "name": "BingX"
+  },
+  "metadata": {
+    "description": "Complete BingX trading skills: USDT-M/Coin-M perpetual contracts, spot trading, copy trading, account management"
+  },
+  "plugins": [
+    {
+      "name": "bingx-ai-skills",
+      "source": "./",
+      "description": "15 BingX trading skills — USDT-M perpetual (market/trade/account), Spot (market/trade/account/wallet), Coin-M perpetual, Copy trading, Account management",
+      "version": "0.3.6",
+      "author": {
+        "name": "BingX"
+      },
+      "homepage": "https://github.com/BingX-API/api-ai-skills",
+      "license": "MIT",
+      "keywords": [
+        "claude-code",
+        "claude-skills",
+        "bingx",
+        "trading",
+        "cryptocurrency",
+        "perpetual-contracts",
+        "swap",
+        "futures",
+        "market-data"
+      ],
+      "category": "finance",
+      "tags": [
+        "trading",
+        "cryptocurrency",
+        "perpetual-contracts",
+        "market-data"
+      ],
+      "strict": false
+    }
+  ]
+}

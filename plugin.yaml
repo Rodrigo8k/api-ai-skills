@@ -1,0 +1,41 @@
+name: bingx-api-skills
+version: 0.3.0
+description: BingX OpenAPI Skills - Perpetual contract and spot trading API integration for Claude Code
+author: BingX API Team
+homepage: https://github.com/BingX-API/api-ai-skills
+
+skills:
+  - swap-market
+  - swap-trade
+  - swap-account
+  - spot-market
+  - spot-trade
+  - spot-account
+  - spot-wallet
+  - cswap-market
+  - cswap-trade
+  - copytrade-spot
+  - copytrade-swap
+  - fund-account
+  - sub-account
+  - agent
+  - standard-trade
+  - references
+
+hooks:
+  - SessionStart
+
+keywords:
+  - claude-code
+  - claude-skills
+  - bingx
+  - trading
+  - cryptocurrency
+  - perpetual-contracts
+  - swap
+  - futures
+  - spot
+  - market-data
+  - algorithmic-trading
+  - api-validation
+  - auto-update
