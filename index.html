@@ -1190,26 +1190,252 @@
             animation: fadeInUp 0.6s ease-out forwards;
         }
 
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-btn span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 73px;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 999;
+            max-height: calc(100vh - 73px);
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-radius: 8px;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--text-primary);
+            background: rgba(30, 143, 255, 0.1);
+        }
+
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 968px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .hero {
+                padding: 120px 1rem 80px;
+            }
+
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 4rem !important;
             }
 
             .hero .subtitle {
-                font-size: 1.1rem;
+                font-size: 1.1rem !important;
             }
 
-            .section-title {
-                font-size: 2rem;
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
-            .nav-links {
-                display: none;
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin: 40px 0;
+            }
+
+            .stat-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .skill-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .skill-name {
+                min-width: auto;
             }
 
             .install-methods {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none !important;
+            }
+
+            .nav-right {
+                gap: 1rem;
+            }
+
+            .language-switcher {
+                order: -1;
+            }
+
+            .hero h1 {
+                font-size: 3rem !important;
+            }
+
+            .hero .subtitle {
+                font-size: 1rem !important;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .feature-card,
+            .skills-category,
+            .install-card {
+                padding: 1.5rem;
+            }
+
+            .feature-title,
+            .category-title {
+                font-size: 1.2rem;
+            }
+
+            .install-command {
+                font-size: 0.85rem;
+                padding: 1rem;
+            }
+
+            .code-example {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .code-example pre {
+                font-size: 0.85rem;
+            }
+
+            footer {
+                padding: 3rem 0 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem !important;
+            }
+
+            .hero .subtitle {
+                font-size: 0.95rem !important;
+            }
+
+            .badge {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .install-card {
+                padding: 1.2rem;
+            }
+
+            .install-command {
+                font-size: 0.75rem;
             }
         }
 
@@ -1273,8 +1499,22 @@
                         <a href="https://bingx-api.github.io/api-ai-skills/zh-tw" class="lang-option">繁體中文</a>
                     </div>
                 </div>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </nav>
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav">
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#install">Install</a></li>
+                <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub</a></li>
+            </ul>
+        </div>
     </header>
 
     <!-- Hero Section -->
@@ -1362,7 +1602,7 @@
                     <!-- <div class="feature-icon">🌐</div> -->
                     <h3 class="feature-title">Multi-Environment Support</h3>
                     <p class="feature-description">
-                        Supports production live trading, demo accounts, and test environments. Flexible switching
+                        Supports production live trading, demo accounts. Flexible switching
                         to meet trading needs at different stages.
                     </p>
                 </div>
@@ -1604,7 +1844,7 @@
                 <ul>
                     <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub Repository</a></li>
                     <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/README.md">Documentation</a></li>
-                    <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/GUIDE.md">Skills Guide</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/README.md">Skills Guide</a></li>
                     <li><a href="https://github.com/BingX-API/api-ai-skills/issues">Issue Tracker</a></li>
                 </ul>
             </div>
@@ -1635,6 +1875,35 @@
     </footer>
 
     <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNav = document.querySelector('.mobile-nav');
+        const body = document.body;
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mobileMenuBtn.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileNav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    mobileMenuBtn.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+            });
+
+            // Close mobile menu when clicking on a link
+            mobileNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenuBtn.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                });
+            });
+        }
+
         // Language switcher dropdown
         const langSwitcher = document.querySelector('.language-switcher');
         const langSelector = document.querySelector('.lang-selector');
@@ -1744,6 +2013,9 @@
                 current += increment;
                 if (current >= target) {
                     element.textContent = target + (element.dataset.suffix || '');
+                    if (current > 99 ){
+                        element.textContent = target + (element.dataset.suffix || '') + "+";
+                    }
                     clearInterval(timer);
                 } else {
                     element.textContent = Math.floor(current) + (element.dataset.suffix || '');
