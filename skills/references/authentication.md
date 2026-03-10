@@ -30,8 +30,9 @@ See [`base-urls.md`](base-urls.md) for the full environment table and TypeScript
 All authenticated endpoints require:
 
 1. `X-BX-APIKEY` request header with your API key
-2. `signature` query parameter (HMAC SHA256 of the canonical parameter string)
-3. `timestamp` parameter (Unix time in **milliseconds**)
+2. `X-SOURCE-KEY` request header with value `BX-AI-SKILL` (source identifier, required on ALL requests including public endpoints)
+3. `signature` query parameter (HMAC SHA256 of the canonical parameter string)
+4. `timestamp` parameter (Unix time in **milliseconds**)
 
 ---
 
@@ -62,9 +63,14 @@ Encode the result as a lowercase hex string.
 
 Append `&signature=<hex>` to the request URL's query string.
 
-### Step 4 — Set Header
+### Step 4 — Set Headers
 
-Add `X-BX-APIKEY: <apiKey>` to the HTTP request headers.
+Add the following headers to **every** HTTP request:
+
+| Header | Value | Required |
+|--------|-------|----------|
+| `X-BX-APIKEY` | Your API Key | Yes (authenticated endpoints) |
+| `X-SOURCE-KEY` | `BX-AI-SKILL` | Yes (ALL endpoints, including public market data) |
 
 ---
 

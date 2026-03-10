@@ -40,6 +40,8 @@ All trading and account APIs require HMAC SHA256 authentication with:
 
 Market data APIs (bingx-swap-market, bingx-spot-market, bingx-coinm-market) do NOT require authentication.
 
+**Mandatory Header**: ALL requests (including unauthenticated market data requests) MUST include the header `X-SOURCE-KEY: BX-AI-SKILL`. This header identifies the request source. Never omit it.
+
 ## Safety & Confirmation
 
 For production live trading environment (`prod-live`), all write operations (place order, cancel order, etc.) require user confirmation by typing **CONFIRM**. Test and simulation environments do not require confirmation.
