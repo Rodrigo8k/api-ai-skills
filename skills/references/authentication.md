@@ -189,17 +189,34 @@ BingX API uses `timestamp` + `recvWindow` to guard against replay attacks. The s
 
 ---
 
-## TypeScript Helper
+## Mandatory Client Code
+
+> **CONSTRAINT**: When generating any code that calls BingX API, you MUST
+> copy the `fetchSigned` function below verbatim. Do NOT reimplement the
+> signing logic, request construction, or JSON parsing. The only permitted
+> modifications are:
+> 1. Adding entries to `ENV_URLS` when the user provides a custom base URL
+> 2. Changing the business parameters passed to `fetchSigned`
 
 ```typescript
 import * as crypto from "crypto";
+import JSONBig from "json-bigint";
+const JSONBigParse = JSONBig({ storeAsString: true });
 
 // Base URLs — see references/base-urls.md for all environments
-// Each env maps to [primary, fallback]; fallback is used when primary is unreachable.
+// Each env maps to [primary (.com), fallback (.pro)].
+// Fallback is used ONLY when primary is unreachable or times out.
 const ENV_URLS: Record<string, string[]> = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
 };
+
+function isNetworkOrTimeout(e: unknown): boolean {
+  if (e instanceof TypeError) return true;
+  if (e instanceof DOMException && e.name === "AbortError") return true;
+  if (e instanceof Error && e.name === "TimeoutError") return true;
+  return false;
+}
 
 /**
  * Build the canonical signing string: ASCII-sort all keys, join as key=value pairs.
@@ -286,17 +303,28 @@ async function fetchSigned(
           ...(contentType ? { "Content-Type": contentType } : {}),
         },
         body,
+        signal: AbortSignal.timeout(10000),
       });
 
-      const json = await res.json();
+      const json = JSONBigParse.parse(await res.text());
       if (json.code !== 0) throw new Error(`BingX error ${json.code}: ${json.msg}`);
       return json.data;
     } catch (e) {
-      if (baseUrl === baseUrls[baseUrls.length - 1]) throw e;
+      if (!isNetworkOrTimeout(e) || baseUrl === baseUrls[baseUrls.length - 1]) throw e;
     }
   }
 }
 ```
+
+### Code Usage Rules
+
+- **MUST** use `json-bigint` with `storeAsString: true` for all response parsing -- order/position IDs exceed `Number.MAX_SAFE_INTEGER`; native `JSON.parse` causes silent precision loss
+- **MUST** use the `isNetworkOrTimeout` + domain fallback loop for every request
+- **MUST** include `X-BX-APIKEY` and `X-SOURCE-KEY: BX-AI-SKILL` headers
+- **MUST NOT** use native `JSON.parse` to parse API responses
+- **MUST NOT** rewrite the HMAC signing logic -- use `buildCanonical` + `crypto.createHmac` exactly as provided
+- **MUST NOT** remove `encodeQueryValues` URL-encoding for batch parameters
+- **MUST NOT** remove `AbortSignal.timeout(10000)` request timeout
 
 ---
 

@@ -90,13 +90,29 @@ Before sending a request, validate parameters client-side to avoid unnecessary A
 
 ## Quick Start
 
+> **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim
+> when generating code. Do NOT rewrite the signing, request, or JSON parsing
+> logic. Only modify: (1) `BASE` URL entries for custom environments,
+> (2) business parameters passed to `fetchSigned`. For the full client with
+> URL-encoding and JSON body support, see
+> [`references/authentication.md`](../references/authentication.md).
+
 ```typescript
 import * as crypto from "crypto";
+import JSONBig from "json-bigint";
+const JSONBigParse = JSONBig({ storeAsString: true });
 // Full signing details & edge cases → references/authentication.md
+// Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
 const BASE = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
 };
+function isNetworkOrTimeout(e: unknown): boolean {
+  if (e instanceof TypeError) return true;
+  if (e instanceof DOMException && e.name === "AbortError") return true;
+  if (e instanceof Error && e.name === "TimeoutError") return true;
+  return false;
+}
 async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST" | "DELETE", path: string, params: Record<string, unknown> = {}
 ) {
@@ -113,16 +129,24 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
         headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL",
           ...(method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) },
         body: method === "POST" ? signed : undefined,
+        signal: AbortSignal.timeout(10000),
       });
-      const json = await res.json();
+      const json = JSONBigParse.parse(await res.text());
       if (json.code !== 0) throw new Error(`BingX error ${json.code}: ${json.msg}`);
       return json.data;
     } catch (e) {
-      if (base === urls[urls.length - 1]) throw e;
+      if (!isNetworkOrTimeout(e) || base === urls[urls.length - 1]) throw e;
     }
   }
 }
 ```
+
+### Code Usage Rules
+
+- **MUST** copy `fetchSigned` verbatim -- do not simplify or rewrite
+- **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
+- **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
+- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
 
 ---
 

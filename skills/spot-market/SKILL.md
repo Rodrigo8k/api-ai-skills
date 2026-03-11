@@ -55,9 +55,24 @@ Public market data for BingX spot trading. No authentication required.
 
 **TypeScript helper:**
 
+> **CONSTRAINT**: You MUST copy the `fetchSpotMarket` function below verbatim
+> when generating code. Do NOT rewrite the request or JSON parsing logic.
+> Only modify: (1) `BASE_URLS` entries for custom environments,
+> (2) business parameters passed to `fetchSpotMarket`.
+
 ```typescript
+import JSONBig from "json-bigint";
+const JSONBigParse = JSONBig({ storeAsString: true });
 // Base URLs — see references/base-urls.md for all environments
+// Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
 const BASE_URLS = ["https://open-api.bingx.com", "https://open-api.bingx.pro"];
+
+function isNetworkOrTimeout(e: unknown): boolean {
+  if (e instanceof TypeError) return true;
+  if (e instanceof DOMException && e.name === "AbortError") return true;
+  if (e instanceof Error && e.name === "TimeoutError") return true;
+  return false;
+}
 
 async function fetchSpotMarket(
   path: string,
@@ -71,16 +86,24 @@ async function fetchSpotMarket(
       const url = `${base}${path}${query ? `?${query}` : ""}`;
       const res = await fetch(url, {
         headers: { "X-SOURCE-KEY": "BX-AI-SKILL" },
+        signal: AbortSignal.timeout(10000),
       });
-      const json = await res.json();
+      const json = JSONBigParse.parse(await res.text());
       if (json.code !== 0) throw new Error(`BingX error ${json.code}: ${json.msg}`);
       return json.data;
     } catch (e) {
-      if (base === BASE_URLS[BASE_URLS.length - 1]) throw e;
+      if (!isNetworkOrTimeout(e) || base === BASE_URLS[BASE_URLS.length - 1]) throw e;
     }
   }
 }
 ```
+
+### Code Usage Rules
+
+- **MUST** copy `fetchSpotMarket` verbatim -- do not simplify or rewrite
+- **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
+- **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
+- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
 
 ## Common Calls
 

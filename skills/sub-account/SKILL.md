@@ -111,13 +111,29 @@ Authenticated endpoints for managing BingX sub-accounts (master account operatio
 
 > **Important:** Several sub-account write endpoints require `Content-Type: application/json` with the params sent as a JSON body. Pass `bodyType: "json"` for those calls. All other POST endpoints use the standard form encoding (`bodyType: "form"`).
 
+> **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim
+> when generating code. Do NOT rewrite the signing, request, or JSON parsing
+> logic. Only modify: (1) `BASE` URL entries for custom environments,
+> (2) business parameters passed to `fetchSigned`. For the full client with
+> URL-encoding and JSON body support, see
+> [`references/authentication.md`](../references/authentication.md).
+
 ```typescript
 import * as crypto from "crypto";
+import JSONBig from "json-bigint";
+const JSONBigParse = JSONBig({ storeAsString: true });
 // Full signing details & edge cases → references/authentication.md
+// Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
 const BASE = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
 };
+function isNetworkOrTimeout(e: unknown): boolean {
+  if (e instanceof TypeError) return true;
+  if (e instanceof DOMException && e.name === "AbortError") return true;
+  if (e instanceof Error && e.name === "TimeoutError") return true;
+  return false;
+}
 async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST", path: string, params: Record<string, unknown> = {},
   bodyType: "form" | "json" = "form"
@@ -132,22 +148,31 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
     try {
       if (method === "GET") {
         const r = await fetch(`${base}${path}?${qs}&signature=${sig}`,
-          { headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL" } });
-        const j = await r.json(); if (j.code !== 0) throw new Error(`BingX error ${j.code}: ${j.msg}`);
+          { headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL" },
+            signal: AbortSignal.timeout(10000) });
+        const j = JSONBigParse.parse(await r.text()); if (j.code !== 0) throw new Error(`BingX error ${j.code}: ${j.msg}`);
         return j.data;
       }
       const ct = bodyType === "json" ? "application/json" : "application/x-www-form-urlencoded";
       const body = bodyType === "json" ? JSON.stringify({ ...all, signature: sig }) : `${qs}&signature=${sig}`;
       const r = await fetch(`${base}${path}`, { method: "POST",
-        headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL", "Content-Type": ct }, body });
-      const j = await r.json(); if (j.code !== 0) throw new Error(`BingX error ${j.code}: ${j.msg}`);
+        headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL", "Content-Type": ct }, body,
+        signal: AbortSignal.timeout(10000) });
+      const j = JSONBigParse.parse(await r.text()); if (j.code !== 0) throw new Error(`BingX error ${j.code}: ${j.msg}`);
       return j.data;
     } catch (e) {
-      if (base === urls[urls.length - 1]) throw e;
+      if (!isNetworkOrTimeout(e) || base === urls[urls.length - 1]) throw e;
     }
   }
 }
 ```
+
+### Code Usage Rules
+
+- **MUST** copy `fetchSigned` verbatim -- do not simplify or rewrite
+- **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
+- **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
+- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
 
 ---
 
