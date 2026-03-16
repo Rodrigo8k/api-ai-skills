@@ -1,6 +1,6 @@
 # BingX OpenAPI Skills
 
-> A BingX Exchange API Skills Library for AI coding assistants — 15 skill modules covering perpetual futures, spot trading, coin-margined contracts, copy trading, and account management.
+> A BingX Exchange API Skills Library for AI coding assistants — 16 skill modules covering perpetual futures, spot trading, coin-margined contracts, copy trading, and account management.
 
 Once installed, you can interact with the AI using natural language to query market data, place trades, and manage accounts — no manual API coding required.
 
@@ -72,6 +72,9 @@ After installation, the AI assistant will automatically recognize the following 
 **Standard Contract**:
 - **bingx-standard-trade** — Standard contract (position query, order history, balance query, etc.)
 
+**Announcements**:
+- **bingx-announcement** — Query official announcements (latest announcements, promotions, product updates, maintenance notices, listing/delisting, funding rate, crypto scout, etc.)
+
 ---
 
 ## Authentication
@@ -83,6 +86,7 @@ The following market data skills can be used **without an API key**:
 - `bingx-swap-market` (perpetual futures market data)
 - `bingx-spot-market` (spot market data)
 - `bingx-coinm-market` (coin-margined futures market data)
+- `bingx-announcement` (official announcements)
 
 ### Skills That Require Auth
 
@@ -202,6 +206,12 @@ After reading these files, the AI can autonomously handle HMAC SHA256 signing, r
 |-------|---------|---------------|
 | `bingx-standard-trade` | Standard contract: position query, order history, balance query, etc. | Yes |
 
+### Announcement
+
+| Skill | Purpose | Auth Required |
+|-------|---------|---------------|
+| `bingx-announcement` | Official announcements: latest announcements, promotions, product updates, maintenance notices, listing/delisting, etc. | No |
+
 ---
 
 ## Safety Mechanisms
@@ -220,6 +230,14 @@ The AI automatically masks sensitive keys when displaying them:
 ---
 
 ## File Structure
+
+Each skill module consists of two files:
+
+```
+skills/<skill-name>/
+├── SKILL.md           # Agent behavior instructions
+└── api-reference.md   # Complete API documentation
+```
 
 Each skill module consists of two files:
 

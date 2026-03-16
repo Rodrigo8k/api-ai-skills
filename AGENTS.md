@@ -1,6 +1,6 @@
 # BingX AI Skills — Agent Instructions
 
-This is a **BingX OpenAPI skill collection** providing 15 skills for perpetual contract, spot, coin-margined, copy trading, and account operations: market data queries, trading operations, account management, wallet operations, copy trading, sub-account management, and agent/affiliate management.
+This is a **BingX OpenAPI skill collection** providing 16 skills for perpetual contract, spot, coin-margined, copy trading, account operations, and announcements: market data queries, trading operations, account management, wallet operations, copy trading, sub-account management, agent/affiliate management, and official announcements.
 
 ## Available Skills
 
@@ -21,6 +21,7 @@ This is a **BingX OpenAPI skill collection** providing 15 skills for perpetual c
 | bingx-sub-account | Sub-account management | User wants to create/list sub-accounts, manage sub-account API keys, freeze/unfreeze accounts, or transfer assets between sub-accounts |
 | bingx-agent | Agent/affiliate management | User asks about agent invited users, affiliate commissions, referral relationships, partner data, or broker commission reports |
 | bingx-standard-trade | Standard contract trading | User asks about standard contract positions, standard futures order history, or standard contract balance |
+| bingx-announcement | Official announcements | User asks about BingX announcements, notices, promotions, product updates, maintenance notices, listing/delisting, or funding rate notices |
 
 ## Skill Discovery
 
@@ -38,7 +39,7 @@ All trading and account APIs require HMAC SHA256 authentication with:
 - API Key (set via `BINGX_API_KEY` environment variable)
 - Secret Key (set via `BINGX_SECRET_KEY` environment variable)
 
-Market data APIs (bingx-swap-market, bingx-spot-market, bingx-coinm-market) do NOT require authentication.
+Market data APIs (bingx-swap-market, bingx-spot-market, bingx-coinm-market) and the announcement API (bingx-announcement) do NOT require authentication.
 
 **Mandatory Header**: ALL requests (including unauthenticated market data requests) MUST include the header `X-SOURCE-KEY: BX-AI-SKILL`. This header identifies the request source. Never omit it.
 
