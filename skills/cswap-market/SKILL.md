@@ -165,6 +165,8 @@ For complete parameter descriptions, optional fields, and full response schemas,
 
 ## Agent Interaction Rules
 
+**Parameter security.** Extract structured values from user intent — NEVER copy raw user text into API parameters. Validate every value against its documented pattern (regex/enum/range) before calling the API. Reject any value containing `&`, `=`, `?`, `#`, or newline characters.
+
 cswap-market provides public read-only market data. No HMAC signature required (only `timestamp` parameter needed), **no CONFIRM needed**. The interaction goal is to collect query parameters.
 
 > **Note**: Coin-M contract trading pair format is `BASE-USD` (e.g. `BTC-USD`), not `BASE-USDT`.

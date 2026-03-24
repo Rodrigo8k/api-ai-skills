@@ -219,6 +219,23 @@ function isNetworkOrTimeout(e: unknown): boolean {
 }
 
 /**
+ * Reject parameter values containing query-string metacharacters to prevent
+ * signed parameter pollution (e.g. "BTC-USDT&side=SELL&quantity=100").
+ */
+function validateParams(params: Record<string, unknown>): void {
+  const FORBIDDEN = /[&=?#\r\n]/;
+  for (const [k, v] of Object.entries(params)) {
+    const s = String(v);
+    if (FORBIDDEN.test(s)) {
+      throw new Error(
+        `Parameter "${k}" contains forbidden character in value: "${s}". ` +
+        `Possible parameter injection attempt.`
+      );
+    }
+  }
+}
+
+/**
  * Build the canonical signing string: ASCII-sort all keys, join as key=value pairs.
  * Values must NOT be URL-encoded at this stage.
  */
@@ -264,6 +281,8 @@ async function fetchSigned(
   const baseUrls = ENV_URLS[env] ?? ENV_URLS["prod-live"];
   const timestamp = Date.now();
   const allParams = { ...params, timestamp };
+
+  validateParams(allParams);
 
   const canonical = buildCanonical(allParams);
 
@@ -323,6 +342,7 @@ async function fetchSigned(
 - **MUST** include `X-BX-APIKEY` and `X-SOURCE-KEY: BX-AI-SKILL` headers
 - **MUST NOT** use native `JSON.parse` to parse API responses
 - **MUST NOT** rewrite the HMAC signing logic -- use `buildCanonical` + `crypto.createHmac` exactly as provided
+- **MUST NOT** remove `validateParams` -- it guards against parameter injection attacks (e.g. values containing `&`, `=`, `?`, `#`, or newlines)
 - **MUST NOT** remove `encodeQueryValues` URL-encoding for batch parameters
 - **MUST NOT** remove `AbortSignal.timeout(10000)` request timeout
 

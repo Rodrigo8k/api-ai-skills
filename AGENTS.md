@@ -1,6 +1,6 @@
 # BingX AI Skills — Agent Instructions
 
-This is a **BingX OpenAPI skill collection** providing 16 skills for perpetual contract, spot, coin-margined, copy trading, account operations, and announcements: market data queries, trading operations, account management, wallet operations, copy trading, sub-account management, agent/affiliate management, and official announcements.
+This is a **BingX OpenAPI skill collection** providing 22 skills for perpetual contract, spot, coin-margined, copy trading, account operations, announcements, and WebSocket real-time data streams: market data queries, trading operations, account management, wallet operations, copy trading, sub-account management, agent/affiliate management, official announcements, and WebSocket market/account data subscriptions.
 
 ## Available Skills
 
@@ -22,6 +22,12 @@ This is a **BingX OpenAPI skill collection** providing 16 skills for perpetual c
 | bingx-agent | Agent/affiliate management | User asks about agent invited users, affiliate commissions, referral relationships, partner data, or broker commission reports |
 | bingx-standard-trade | Standard contract trading | User asks about standard contract positions, standard futures order history, or standard contract balance |
 | bingx-announcement | Official announcements | User asks about BingX announcements, notices, promotions, product updates, maintenance notices, listing/delisting, or funding rate notices |
+| bingx-swap-ws-market | Swap WebSocket market data | User asks for real-time swap market data, live perpetual futures price feeds, streaming swap order books, WebSocket depth/trade/kline/ticker subscriptions for perpetual futures |
+| bingx-swap-ws-account | Swap WebSocket account data | User asks for real-time swap account updates, live order status streaming, position change notifications, or WebSocket account monitoring for perpetual futures |
+| bingx-spot-ws-market | Spot WebSocket market data | User asks for real-time spot market data, live spot price feeds, streaming spot order books, WebSocket depth/trade/kline/ticker subscriptions for spot trading |
+| bingx-spot-ws-account | Spot WebSocket account data | User asks for real-time spot account updates, live spot order status streaming, spot balance change notifications, or WebSocket account monitoring for spot trading |
+| bingx-coinm-ws-market | Coin-M WebSocket market data | User asks for real-time coin-margined futures market data, live Coin-M price feeds, streaming inverse futures order books, or WebSocket subscriptions for coin-margined perpetual futures |
+| bingx-coinm-ws-account | Coin-M WebSocket account data | User asks for real-time Coin-M account updates, live coin-margined order status, inverse futures position changes, or WebSocket account monitoring for coin-margined perpetual futures |
 
 ## Skill Discovery
 
@@ -39,13 +45,27 @@ All trading and account APIs require HMAC SHA256 authentication with:
 - API Key (set via `BINGX_API_KEY` environment variable)
 - Secret Key (set via `BINGX_SECRET_KEY` environment variable)
 
-Market data APIs (bingx-swap-market, bingx-spot-market, bingx-coinm-market) and the announcement API (bingx-announcement) do NOT require authentication.
+Market data APIs (bingx-swap-market, bingx-spot-market, bingx-coinm-market), the announcement API (bingx-announcement), and WebSocket market data streams (bingx-swap-ws-market, bingx-spot-ws-market, bingx-coinm-ws-market) do NOT require authentication.
+
+WebSocket account data streams (bingx-swap-ws-account, bingx-spot-ws-account, bingx-coinm-ws-account) require a Listen Key obtained via the REST API `/openApi/user/auth/userDataStream` (POST to generate, PUT to extend, DELETE to delete). The Listen Key is valid for 1 hour and should be extended every 30 minutes.
 
 **Mandatory Header**: ALL requests (including unauthenticated market data requests) MUST include the header `X-SOURCE-KEY: BX-AI-SKILL`. This header identifies the request source. Never omit it.
 
 ## Safety & Confirmation
 
 For production live trading environment (`prod-live`), all write operations (place order, cancel order, etc.) require user confirmation by typing **CONFIRM**. Test and simulation environments do not require confirmation.
+
+## WebSocket Endpoints
+
+WebSocket skills provide real-time data streaming via persistent connections:
+
+| Product Line | Market Data (Public) | Account Data (Authenticated) |
+|-------------|---------------------|------------------------------|
+| USDT-M Perpetual | `wss://open-api-swap.bingx.com/swap-market` | `wss://open-api-swap.bingx.com/swap-market?listenKey=<key>` |
+| Spot | `wss://open-api-ws.bingx.com/market` | `wss://open-api-ws.bingx.com/market?listenKey=<key>` |
+| Coin-M Perpetual | `wss://open-api-cswap-ws.bingx.com/market` | `wss://open-api-cswap-ws.bingx.com/market?listenKey=<key>` |
+
+All WebSocket messages are GZIP compressed. Server sends heartbeat messages (Swap: exact string `Ping`; Spot/Coin-M: may contain lowercase `ping`); client must reply `Pong` to keep the connection alive.
 
 ## Multi-Skill Workflows
 
@@ -64,3 +84,11 @@ Skills work together for complete trading workflows:
 **Coin-M Trading**: `bingx-coinm-market` (get price/depth) → `bingx-coinm-trade` (place order)
 
 **Copy Trading**: `bingx-copytrade-swap` (query current positions) → `bingx-copytrade-swap` (close/set TP/SL)
+
+**Real-Time Swap Monitoring**: `bingx-swap-ws-market` (subscribe to live price/depth) + `bingx-swap-ws-account` (monitor positions/orders in real-time)
+
+**Real-Time Spot Monitoring**: `bingx-spot-ws-market` (subscribe to live spot price/depth) + `bingx-spot-ws-account` (monitor spot orders/balance in real-time)
+
+**Real-Time Coin-M Monitoring**: `bingx-coinm-ws-market` (subscribe to live Coin-M price/depth) + `bingx-coinm-ws-account` (monitor positions/orders in real-time)
+
+**REST + WebSocket Combo**: `bingx-swap-market` (query historical klines) → `bingx-swap-ws-market` (subscribe to real-time kline updates for continuous monitoring)

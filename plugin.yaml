@@ -21,6 +21,12 @@ skills:
   - agent
   - standard-trade
   - announcement
+  - swap-ws-market
+  - swap-ws-account
+  - spot-ws-market
+  - spot-ws-account
+  - cswap-ws-market
+  - cswap-ws-account
   - references
 
 hooks:

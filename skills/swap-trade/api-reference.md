@@ -102,6 +102,18 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 | `activationPrice` | float64 | No | Used with TRAILING_STOP_MARKET or TRAILING_TP_SL orders, default as the latest price(supporting different workingType) |
 | `stopGuaranteed` | string | No | true: Enables the guaranteed stop-loss and take-profit feature; false: Disables the feature; cutfee: Enable the guaranteed stop loss function and enable the VIP guaranteed stop loss fee reduction function. When stopGuaranteed is true or cutfee, the quantity field does not take effect. The guaranteed stop-loss feature is not enabled by default. Supported order types include: STOP_MARKET: Market stop-loss order / TAKE_PROFIT_MARKET: Market take-profit order / STOP: Limit stop-loss order / TAKE_PROFIT: Limit take-profit order / TRIGGER_LIMIT: Stop-limit order with trigger / TRIGGER_MARKET: Market order with trigger for stop-loss. |
 
+**Response `data`:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `symbol` | string | Trading pair, e.g. `BTC-USDT` |
+| `orderId` | int64 | Order ID |
+| `side` | string | Order direction: `BUY` / `SELL` |
+| `positionSide` | string | `BOTH`, `LONG`, or `SHORT` |
+| `type` | string | Order type |
+| `clientOrderId` | string | Custom order ID (if provided) |
+| `workingType` | string | Trigger price type, e.g. `MARK_PRICE` |
+
 ---
 
 ### 3. Batch Place Orders
@@ -496,10 +508,7 @@ Query individual trade fills for the account, returning detailed information for
 
 `GET /openApi/swap/v1/positionSide/dual`
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+**Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data`:**
 
@@ -760,10 +769,7 @@ Query detailed information about a specific TWAP order, including child order ex
 
 Query the current multi-assets mode setting.
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+**Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data`:**
 
@@ -799,10 +805,7 @@ Switch between single-asset mode and multi-assets mode. Cannot switch when there
 
 Query multi-assets mode rules including supported margin assets and their discount rates.
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+**Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data`:**
 
@@ -818,10 +821,7 @@ Query multi-assets mode rules including supported margin assets and their discou
 
 Query margin assets and their valuations under multi-assets mode.
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+**Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data`:**
 

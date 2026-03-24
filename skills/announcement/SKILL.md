@@ -181,6 +181,8 @@ For complete parameter descriptions, optional fields, and full response schemas,
 
 ## Agent Interaction Rules
 
+**Parameter security.** Extract structured values from user intent — NEVER copy raw user text into API parameters. Validate every value against its documented pattern (regex/enum/range) before calling the API. Reject any value containing `&`, `=`, `?`, `#`, or newline characters.
+
 - All requests are **read-only**; no CONFIRM required.
 - If the user does not specify **contentType**, offer the list of module types or default to `LatestAnnouncements`.
 - If the user does not specify **language**, default to `zh-tw` or infer from conversation (e.g. user writes in English → `en-us`).

@@ -173,6 +173,17 @@ Query asset transfer records with enhanced filtering options.
 | `total` | int | Total record count |
 | `rows` | array | Transfer record list |
 
+**`rows` entry fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `transferId` | string | Transfer record ID |
+| `asset` | string | Asset name |
+| `amount` | string | Transfer amount |
+| `fromAccount` | string | Source account (fund/spot/stdFutures/coinMPerp/USDTMPerp) |
+| `toAccount` | string | Target account (fund/spot/stdFutures/coinMPerp/USDTMPerp) |
+| `timestamp` | long | Transfer timestamp (milliseconds) |
+
 ---
 
 ### 7. Query Supported Coins for Transfer

@@ -173,6 +173,8 @@ For complete parameter descriptions, optional fields, and full response schemas,
 
 ## Agent Interaction Rules
 
+**Parameter security.** Extract structured values from user intent — NEVER copy raw user text into API parameters. Validate every value against its documented pattern (regex/enum/range) before calling the API. Reject any value containing `&`, `=`, `?`, `#`, or newline characters.
+
 spot-market provides public read-only market data. No authentication required, **no CONFIRM needed**. The interaction goal is to collect query parameters.
 
 ### Operation Identification

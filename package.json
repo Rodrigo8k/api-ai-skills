@@ -37,8 +37,12 @@
   "devDependencies": {
     "@types/json-bigint": "^1.0.4",
     "@types/node": "^25.3.5",
+    "@types/pako": "^2.0.4",
+    "@types/ws": "^8.18.1",
     "json-bigint": "^1.0.0",
+    "pako": "^2.1.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "ws": "^8.20.0"
   }
 }

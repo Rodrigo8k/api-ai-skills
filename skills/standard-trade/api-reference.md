@@ -17,10 +17,7 @@
 
 Query all current positions in the standard contract account. No request parameters required.
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+**Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data` (array):**
 
@@ -82,10 +79,7 @@ Query historical orders for a standard contract trading pair.
 
 Query the standard contract account balance. No request parameters required.
 
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+**Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data`:**
 

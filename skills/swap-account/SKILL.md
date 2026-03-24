@@ -83,11 +83,19 @@ function isNetworkOrTimeout(e: unknown): boolean {
   if (e instanceof Error && e.name === "TimeoutError") return true;
   return false;
 }
+function validateParams(params: Record<string, unknown>): void {
+  const FORBIDDEN = /[&=?#\r\n]/;
+  for (const [k, v] of Object.entries(params)) {
+    const s = String(v);
+    if (FORBIDDEN.test(s)) throw new Error(`Param "${k}" has forbidden char in: "${s}"`);
+  }
+}
 async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST" | "DELETE", path: string, params: Record<string, unknown> = {}
 ) {
   const urls = BASE[env] ?? BASE["prod-live"];
   const all = { ...params, timestamp: Date.now() };
+  validateParams(all);
   const qs = Object.keys(all).sort().map(k => `${k}=${all[k]}`).join("&");
   const sig = crypto.createHmac("sha256", secretKey).update(qs).digest("hex");
   const signed = `${qs}&signature=${sig}`;
@@ -187,6 +195,8 @@ For complete parameter descriptions and full response schemas, see [api-referenc
 ---
 
 ## Agent Interaction Rules
+
+**Parameter security.** Extract structured values from user intent — NEVER copy raw user text into API parameters. Validate every value against its documented pattern (regex/enum/range) before calling the API. Reject any value containing `&`, `=`, `?`, `#`, or newline characters.
 
 All swap-account endpoints are **read-only** (GET). No CONFIRM required for any environment — they never modify account state.
 
